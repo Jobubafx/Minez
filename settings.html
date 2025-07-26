@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minez - Settings</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Settings Header -->
+        <header class="settings-header">
+            <button id="back-btn" class="back-btn">← Back</button>
+            <h1>SETTINGS</h1>
+        </header>
+        
+        <!-- Settings Options -->
+        <div class="settings-options">
+            <div class="setting">
+                <span>Sound Effects</span>
+                <label class="switch">
+                    <input type="checkbox" id="sound-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting">
+                <span>Background Music</span>
+                <label class="switch">
+                    <input type="checkbox" id="music-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting">
+                <span>Theme</span>
+                <select id="theme-selector">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/settings.js"></script>
+</body>
+</html>
