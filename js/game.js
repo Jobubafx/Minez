@@ -15,30 +15,31 @@ let gameState = {
 
 // Initialize Game
 function initGame() {
-    // ... (keep your existing init code)
-}
-
-function showInterstitialAd() {
-    return new Promise((resolve) => {
-        window.adCompleteCallback = () => resolve(true);
-        window.adErrorCallback = () => resolve(false);
-        console.log("Monetag interstitial triggered");
-    });
-}
-
-// Skip Level with Ad
-document.getElementById('skip-ad-btn').addEventListener('click', async function() {
-    const adCompleted = await showInterstitialAd();
-    if (adCompleted) {
-        gameState.level++;
-        initGame();
-        tg.showAlert("Level skipped!");
+    document.getElementById('level-display').textContent = `Level: ${gameState.level}`;
+    document.getElementById('coin-balance').textContent = `Coins: ${gameState.coins}`;
+    document.getElementById('next-btn').disabled = true;
+    
+    // Set bombs/diamonds based on level
+    if ((gameState.level >= 1 && gameState.level <= 25) || 
+        (gameState.level >= 51 && gameState.level <= 75) ||
+        (gameState.level >= 101 && gameState.level <= 125)) {
+        gameState.bombs = 5;
+        gameState.diamonds = 20;
     } else {
-        tg.showAlert("Ad not available - try again later");
+        gameState.bombs = 8;
+        gameState.diamonds = 17;
     }
+    
+    generateBoard();
+}
+
+// ... (rest of your game.js implementation remains the same)
+
+// Event Listeners
+document.getElementById('back-btn').addEventListener('click', () => {
+    window.location.href = 'index.html';
 });
 
-// Restart Level (costs 5 coins)
 document.getElementById('restart-btn').addEventListener('click', function() {
     if (gameState.coins >= 5) {
         gameState.coins -= 5;
@@ -50,24 +51,5 @@ document.getElementById('restart-btn').addEventListener('click', function() {
     }
 });
 
-// Game Over with Ad every 3 levels
-async function gameOver(isWin) {
-    gameState.gameOver = true;
-    
-    if (isWin) {
-        gameState.coins += 10;
-        updateCoins();
-        document.getElementById('next-btn').disabled = false;
-        
-        // Show ad every 3 levels
-        if (gameState.level % 3 === 0) {
-            await showInterstitialAd();
-        }
-        
-        tg.showAlert(`Level Complete! +10 Coins!`);
-    }
-    
-    // ... (rest of your gameOver code)
-}
-
-// ... (keep other existing functions)
+// Initialize game
+document.addEventListener('DOMContentLoaded', initGame);
