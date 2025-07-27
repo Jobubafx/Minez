@@ -1,14 +1,16 @@
+/* ===== BASE STYLES ===== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 body {
     background-color: #f5f5f5;
     color: #333;
     height: 100vh;
+    overflow-x: hidden;
 }
 
 .container {
@@ -20,13 +22,15 @@ body {
     position: relative;
 }
 
-/* Header Styles */
+/* ===== HEADER STYLES ===== */
 header {
     display: flex;
     justify-content: space-between;
     padding: 15px;
     background-color: #4a76a8;
     color: white;
+    position: relative;
+    z-index: 10;
 }
 
 .game-header, .shop-header, .settings-header {
@@ -39,9 +43,10 @@ header {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    font-size: 0.9rem;
 }
 
-/* Homepage Styles */
+/* ===== HOMEPAGE STYLES ===== */
 .home-main {
     display: flex;
     flex-direction: column;
@@ -50,44 +55,53 @@ header {
     flex: 1;
     padding: 20px;
     text-align: center;
+    gap: 20px;
 }
 
 .game-title {
     font-size: 3rem;
-    margin: 20px 0;
     color: #4a76a8;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
 }
 
 .username-display {
-    margin-top: 20px;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: #666;
+    font-weight: 500;
 }
 
 .start-btn {
     background-color: #4CAF50;
     color: white;
-    font-size: 1.5rem;
-    padding: 15px 30px;
+    font-size: 1.3rem;
+    padding: 15px 40px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
     transition: all 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .start-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
 }
 
-/* Game Board */
+.start-btn:active {
+    transform: translateY(0);
+}
+
+/* ===== GAME BOARD STYLES ===== */
 .game-board {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
-    gap: 5px;
+    gap: 6px;
     padding: 15px;
     flex: 1;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .cell {
@@ -96,18 +110,21 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    border-radius: 5px;
+    font-size: 24px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
+    user-select: none;
 }
 
 .cell:hover {
-    background-color: #ccc;
+    background-color: #d0d0d0;
+    transform: scale(0.98);
 }
 
 .cell.revealed {
     background-color: #f0f0f0;
+    transform: scale(0.95);
 }
 
 .cell.bomb {
@@ -120,65 +137,110 @@ header {
     color: white;
 }
 
-/* Game Controls */
+/* ===== GAME CONTROLS ===== */
 .game-controls {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
+    padding: 12px;
     background-color: #4a76a8;
     flex-wrap: wrap;
+    gap: 5px;
 }
 
 .control-btn {
     background-color: #4a76a8;
     color: white;
-    margin: 3px;
     flex: 1;
     min-width: 18%;
     font-size: 12px;
-    padding: 8px 5px;
+    padding: 10px 5px;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+}
+
+.control-btn:hover {
+    opacity: 0.9;
+}
+
+.control-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 #next-btn {
     background-color: #4CAF50;
 }
 
-#next-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+#restart-btn {
+    background-color: #FF9500;
 }
 
-/* Shop Styles */
+#skip-coin-btn {
+    background-color: #9c27b0;
+}
+
+#skip-ad-btn {
+    background-color: #ff9800;
+}
+
+/* ===== SHOP STYLES ===== */
 .coin-packages {
     display: grid;
     grid-template-columns: 1fr;
     gap: 15px;
     padding: 15px;
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 .coin-package {
     background-color: white;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.coin-package:hover {
+    transform: translateY(-3px);
+}
+
+.coin-package h3 {
+    color: #4a76a8;
+    margin-bottom: 5px;
+    font-size: 1.2rem;
+}
+
+.coin-package p {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
 }
 
 .buy-btn {
-    background-color: #FF9500;
+    background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 12px;
+    border-radius: 8px;
     width: 100%;
     cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
 }
 
-/* Settings Styles */
+.buy-btn:hover {
+    background-color: #3e8e41;
+}
+
+/* ===== SETTINGS STYLES ===== */
 .settings-options {
-    padding: 15px;
+    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 .setting {
@@ -234,18 +296,37 @@ input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-/* Ad Containers */
-.ad-top, .ad-bottom {
-    height: 50px;
-    background-color: #f0f0f0;
+/* ===== DROPDOWN MENU ===== */
+.dropdown-menu {
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 100;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #666;
-    font-size: 12px;
+    flex-direction: column;
+    padding: 10px;
+    min-width: 150px;
 }
 
-/* Dark Theme */
+.dropdown-menu.hidden {
+    display: none;
+}
+
+.dropdown-menu button {
+    margin: 5px 0;
+    background-color: #4a76a8;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: left;
+}
+
+/* ===== DARK THEME ===== */
 body.dark {
     background-color: #1a1a1a;
     color: #f0f0f0;
@@ -256,11 +337,12 @@ body.dark .game-title {
 }
 
 body.dark .username-display {
-    color: #ccc;
+    color: #aaa;
 }
 
 body.dark .cell {
     background-color: #333;
+    color: #f0f0f0;
 }
 
 body.dark .cell:hover {
@@ -268,18 +350,63 @@ body.dark .cell:hover {
 }
 
 body.dark .coin-package {
-    background-color: #333;
+    background-color: #2d2d2d;
     color: #f0f0f0;
+}
+
+body.dark .coin-package h3 {
+    color: #4CAF50;
+}
+
+body.dark .coin-package p {
+    color: #aaa;
 }
 
 body.dark .setting {
     border-bottom-color: #444;
 }
 
-/* Responsive */
+body.dark .dropdown-menu {
+    background-color: #2d2d2d;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
 @media (max-width: 400px) {
     .control-btn {
         font-size: 11px;
-        padding: 6px 3px;
+        padding: 8px 3px;
     }
+    
+    .game-title {
+        font-size: 2.5rem;
+    }
+    
+    .cell {
+        font-size: 20px;
+    }
+}
+
+/* ===== MONETAG AD CONTAINERS ===== */
+.monetag-ad-container {
+    margin: 0 auto;
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Interstitial ad overlay */
+body.monetag-interstitial-active {
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 1.5s infinite;
 }
