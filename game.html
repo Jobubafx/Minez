@@ -13,15 +13,12 @@
             <h1>MINEZ</h1>
             <div class="game-info">
                 <span id="level-display">Level: 1</span>
-                <span id="coin-balance">Coins: 100</span>
+                <span id="coin-balance">Coins: 50</span>
             </div>
         </header>
         
-        <!-- Game Board Container - Fixed height -->
         <div class="board-container">
-            <div class="game-board" id="game-board">
-                <!-- Cells will be inserted here by JavaScript -->
-            </div>
+            <div class="game-board" id="game-board"></div>
         </div>
         
         <div class="game-controls">
@@ -29,7 +26,7 @@
             <button id="skip-ad-btn" class="control-btn">Skip (Ad)</button>
             <button id="skip-coin-btn" class="control-btn">Skip (50 Coins)</button>
             <button id="restart-btn" class="control-btn">Restart (5 Coins)</button>
-            <button id="next-btn" class="control-btn">Next (10 Coins)</button>
+            <button id="next-btn" class="control-btn" disabled>Next (10 Coins)</button>
         </div>
     </div>
     
