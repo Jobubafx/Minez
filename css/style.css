@@ -1,4 +1,4 @@
-/* ===== BASE STYLES ===== */
+/* ===== BASE RESET ===== */
 * {
     margin: 0;
     padding: 0;
@@ -13,107 +13,42 @@ body {
     overflow-x: hidden;
 }
 
-/* ===== CONTAINERS ===== */
-.container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 10px;
-}
-
+/* ===== GAME CONTAINER - CRITICAL FIX ===== */
 .game-container {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 10px;
-}
-
-/* ===== HEADER STYLES ===== */
-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 15px;
-    background-color: #4a76a8;
-    color: white;
-    position: relative;
-    z-index: 10;
-}
-
-.game-header {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
-
-.game-info {
-    display: flex;
-    justify-content: space-between;
     width: 100%;
-    font-size: 0.9rem;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 10px;
+    position: relative;
 }
 
-/* ===== HOMEPAGE STYLES ===== */
-.home-main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    padding: 20px;
-    text-align: center;
-    gap: 20px;
-}
-
-.game-title {
-    font-size: 3rem;
-    color: #4a76a8;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-}
-
-.username-display {
-    font-size: 1.1rem;
-    color: #666;
-    font-weight: 500;
-}
-
-.start-btn {
-    background-color: #4CAF50;
-    color: white;
-    font-size: 1.3rem;
-    padding: 15px 40px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-/* ===== GAME BOARD STYLES ===== */
+/* ===== GAME BOARD CONTAINER - ESSENTIAL FIX ===== */
 .board-container {
-    flex: 1;
+    flex: 1 1 auto;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
     padding: 10px 0;
-    min-height: 0; /* Critical for Firefox */
+    overflow: hidden;
 }
 
 .game-board {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: repeat(5, minmax(0, 1fr));
     gap: 8px;
     width: 100%;
-    max-width: 350px;
+    max-width: 400px;
+    height: 100%;
     aspect-ratio: 1/1;
 }
 
 .cell {
-    aspect-ratio: 1/1;
+    position: relative;
     background-color: #ddd;
     display: flex;
     align-items: center;
@@ -121,14 +56,55 @@ header {
     font-size: 24px;
     border-radius: 6px;
     cursor: pointer;
+    overflow: hidden;
+}
+
+/* ===== HEADER STYLES ===== */
+.game-header {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #4a76a8;
+    color: white;
+    text-align: center;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 5px 0;
+}
+
+/* ===== GAME CONTROLS ===== */
+.game-controls {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+    padding: 10px 0;
+    width: 100%;
+}
+
+.control-btn {
+    padding: 10px 5px;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
     transition: all 0.2s;
-    user-select: none;
+    text-align: center;
 }
 
-.cell:hover {
-    background-color: #d0d0d0;
-}
+/* Button Colors */
+#back-btn { background-color: #3a5f8a; }
+#skip-ad-btn { background-color: #ff9800; }
+#skip-coin-btn { background-color: #9c27b0; }
+#restart-btn { background-color: #FF9500; }
+#next-btn { background-color: #4CAF50; }
 
+/* ===== CELL STATES ===== */
 .cell.revealed {
     background-color: #f0f0f0;
 }
@@ -143,144 +119,17 @@ header {
     color: white;
 }
 
-/* ===== GAME CONTROLS ===== */
-.game-controls {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    background-color: #4a76a8;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.control-btn {
-    flex: 1;
-    min-width: calc(20% - 5px);
-    padding: 10px 5px;
-    font-size: 12px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    color: white;
-    transition: all 0.2s;
-}
-
-#back-btn { background-color: #3a5f8a; }
-#skip-ad-btn { background-color: #ff9800; }
-#skip-coin-btn { background-color: #9c27b0; }
-#restart-btn { background-color: #FF9500; }
-#next-btn { background-color: #4CAF50; }
-
-/* ===== SHOP STYLES ===== */
-.coin-packages {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-    padding: 15px;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.coin-package {
-    background-color: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-}
-
-.buy-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    width: 100%;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-/* ===== SETTINGS STYLES ===== */
-.settings-options {
-    padding: 20px;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.setting {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: #4CAF50;
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
-
-/* ===== DROPDOWN MENU ===== */
-.dropdown-menu {
-    position: absolute;
-    top: 60px;
-    left: 10px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 100;
-    display: none;
-    flex-direction: column;
-    padding: 8px 0;
-    min-width: 150px;
-}
-
-.dropdown-menu.visible {
-    display: flex;
-}
-
-.dropdown-btn {
-    background: none;
-    border: none;
-    padding: 10px 16px;
-    text-align: left;
-    cursor: pointer;
-    color: #333;
-    font-size: 14px;
+/* ===== RESPONSIVE FIXES ===== */
+@media (max-width: 500px) {
+    .game-board {
+        max-width: 100vw;
+        gap: 5px;
+    }
+    
+    .control-btn {
+        font-size: 11px;
+        padding: 8px 2px;
+    }
 }
 
 /* ===== DARK THEME ===== */
@@ -289,44 +138,10 @@ body.dark {
     color: #f0f0f0;
 }
 
-body.dark .game-title {
-    color: #4CAF50;
-}
-
 body.dark .cell {
     background-color: #333;
 }
 
-body.dark .cell:hover {
-    background-color: #444;
-}
-
-body.dark .coin-package {
-    background-color: #2d2d2d;
-}
-
-body.dark .dropdown-menu {
-    background-color: #2d2d2d;
-}
-
-body.dark .dropdown-btn {
-    color: #f0f0f0;
-}
-
-/* ===== RESPONSIVE ADJUSTMENTS ===== */
-@media (max-width: 400px) {
-    .game-board {
-        max-width: 300px;
-        gap: 6px;
-    }
-    
-    .control-btn {
-        font-size: 11px;
-        padding: 8px 3px;
-        min-width: calc(33% - 4px);
-    }
-    
-    .game-title {
-        font-size: 2.5rem;
-    }
+body.dark .cell.revealed {
+    background-color: #2a2a2a;
 }
