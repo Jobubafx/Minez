@@ -3,19 +3,56 @@ tg.expand();
 
 // Game State
 const gameState = {
-    level: 1,
-    coins: 100,
-    board: Array(25).fill(null),
+    level: parseInt(localStorage.getItem('userLevel')) || 1,
+    coins: parseInt(localStorage.getItem('userCoins')) || 50,
+    board: [],
     revealed: 0,
+    diamondsFound: 0,
+    bombs: 0,
+    diamonds: 0,
     gameOver: false
 };
 
 // Initialize Game
 function initGame() {
-    const gameBoard = document.getElementById('game-board');
-    gameBoard.innerHTML = ''; // Clear existing cells
+    // Update display
+    document.getElementById('level-display').textContent = `Level: ${gameState.level}`;
+    document.getElementById('coin-balance').textContent = `Coins: ${gameState.coins}`;
+    document.getElementById('next-btn').disabled = true;
     
-    // Create 5x5 grid
+    // Set difficulty
+    gameState.bombs = gameState.level % 2 === 0 ? 8 : 5;
+    gameState.diamonds = gameState.level % 2 === 0 ? 17 : 20;
+    
+    // Generate board
+    const gameBoard = document.getElementById('game-board');
+    gameBoard.innerHTML = '';
+    gameState.board = Array(25).fill(null);
+    gameState.revealed = 0;
+    gameState.diamondsFound = 0;
+    gameState.gameOver = false;
+    
+    // Place bombs
+    let bombsPlaced = 0;
+    while (bombsPlaced < gameState.bombs) {
+        const randomIndex = Math.floor(Math.random() * 25);
+        if (gameState.board[randomIndex] === null) {
+            gameState.board[randomIndex] = 'bomb';
+            bombsPlaced++;
+        }
+    }
+    
+    // Place diamonds
+    let diamondsPlaced = 0;
+    while (diamondsPlaced < gameState.diamonds) {
+        const randomIndex = Math.floor(Math.random() * 25);
+        if (gameState.board[randomIndex] === null) {
+            gameState.board[randomIndex] = 'diamond';
+            diamondsPlaced++;
+        }
+    }
+    
+    // Create cells
     for (let i = 0; i < 25; i++) {
         const cell = document.createElement('div');
         cell.className = 'cell';
@@ -23,53 +60,85 @@ function initGame() {
         cell.addEventListener('click', () => handleCellClick(i));
         gameBoard.appendChild(cell);
     }
-    
-    // Update game info
-    document.getElementById('level-display').textContent = `Level: ${gameState.level}`;
-    document.getElementById('coin-balance').textContent = `Coins: ${gameState.coins}`;
 }
 
 // Handle Cell Click
 function handleCellClick(index) {
-    if (gameState.gameOver) return;
+    if (gameState.gameOver || gameState.board[index] === 'revealed') return;
     
     const cell = document.querySelector(`.cell[data-index="${index}"]`);
-    cell.style.backgroundColor = '#aaddff';
-    cell.textContent = '?'; // Temporary reveal
+    gameState.board[index] = 'revealed';
     gameState.revealed++;
     
-    // Simple win condition for testing
-    if (gameState.revealed >= 5) {
-        gameState.gameOver = true;
-        document.getElementById('next-btn').disabled = false;
-        alert('Level complete! Click Next to continue');
+    if (gameState.board[index] === 'bomb') {
+        cell.style.backgroundColor = '#ff4444';
+        cell.textContent = '💣';
+        gameOver(false);
+    } else if (gameState.board[index] === 'diamond') {
+        cell.style.backgroundColor = '#33ccff';
+        cell.textContent = '💎';
+        gameState.diamondsFound++;
+        
+        const requiredDiamonds = gameState.bombs === 5 ? 6 : 5;
+        if (gameState.diamondsFound >= requiredDiamonds) {
+            gameOver(true);
+        }
+    } else {
+        cell.style.backgroundColor = '#aaddff';
     }
 }
 
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', initGame);
+// Game Over
+function gameOver(isWin) {
+    gameState.gameOver = true;
+    
+    if (isWin) {
+        gameState.coins += 10;
+        localStorage.setItem('userCoins', gameState.coins);
+        document.getElementById('coin-balance').textContent = `Coins: ${gameState.coins}`;
+        document.getElementById('next-btn').disabled = false;
+    }
+    
+    // Reveal all cells
+    gameState.board.forEach((cell, index) => {
+        const cellElement = document.querySelector(`.cell[data-index="${index}"]`);
+        if (cell === 'bomb') {
+            cellElement.style.backgroundColor = '#ff4444';
+            cellElement.textContent = '💣';
+        } else if (cell === 'diamond') {
+            cellElement.style.backgroundColor = '#33ccff';
+            cellElement.textContent = '💎';
+        }
+    });
+}
 
-// Button Event Listeners
+// Button Events
 document.getElementById('back-btn').addEventListener('click', () => {
     window.location.href = 'index.html';
 });
 
 document.getElementById('next-btn').addEventListener('click', () => {
-    gameState.level++;
-    gameState.revealed = 0;
-    gameState.gameOver = false;
-    document.getElementById('next-btn').disabled = true;
-    initGame();
-});
-
-document.getElementById('restart-btn').addEventListener('click', () => {
-    if (gameState.coins >= 5) {
-        gameState.coins -= 5;
-        document.getElementById('coin-balance').textContent = `Coins: ${gameState.coins}`;
-        gameState.revealed = 0;
-        gameState.gameOver = false;
+    if (gameState.coins >= 10) {
+        gameState.coins -= 10;
+        gameState.level++;
+        localStorage.setItem('userCoins', gameState.coins);
+        localStorage.setItem('userLevel', gameState.level);
         initGame();
     } else {
         alert('Not enough coins!');
     }
 });
+
+document.getElementById('restart-btn').addEventListener('click', () => {
+    if (gameState.coins >= 5) {
+        gameState.coins -= 5;
+        localStorage.setItem('userCoins', gameState.coins);
+        document.getElementById('coin-balance').textContent = `Coins: ${gameState.coins}`;
+        initGame();
+    } else {
+        alert('Not enough coins to restart!');
+    }
+});
+
+// Initialize game
+document.addEventListener('DOMContentLoaded', initGame);
