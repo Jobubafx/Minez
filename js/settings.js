@@ -1,35 +1,25 @@
 const tg = window.Telegram.WebApp;
 
-// DOM Elements
-const backBtn = document.getElementById('back-btn');
+// Load saved settings
 const soundToggle = document.getElementById('sound-toggle');
 const musicToggle = document.getElementById('music-toggle');
 const themeSelector = document.getElementById('theme-selector');
 
-// Load saved settings
 soundToggle.checked = localStorage.getItem('soundEnabled') !== 'false';
 musicToggle.checked = localStorage.getItem('musicEnabled') !== 'false';
 themeSelector.value = localStorage.getItem('theme') || 'light';
 
-// Event Listeners
-backBtn.addEventListener('click', () => {
+// Apply theme immediately
+document.body.classList.toggle('dark', themeSelector.value === 'dark');
+
+// Event listeners
+themeSelector.addEventListener('change', function() {
+    const isDark = this.value === 'dark';
+    document.body.classList.toggle('dark', isDark);
+    localStorage.setItem('theme', this.value);
+});
+
+// Back button
+document.getElementById('back-btn').addEventListener('click', function() {
     window.location.href = 'index.html';
-});
-
-soundToggle.addEventListener('change', (e) => {
-    localStorage.setItem('soundEnabled', e.target.checked);
-});
-
-musicToggle.addEventListener('change', (e) => {
-    localStorage.setItem('musicEnabled', e.target.checked);
-});
-
-themeSelector.addEventListener('change', (e) => {
-    localStorage.setItem('theme', e.target.value);
-    document.body.classList.toggle('dark', e.target.value === 'dark');
-});
-
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    document.body.classList.toggle('dark', themeSelector.value === 'dark');
 });
