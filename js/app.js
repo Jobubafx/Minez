@@ -20,7 +20,7 @@ document.getElementById('username-display').textContent = `Welcome, ${userData.u
 /*********************/
 
 let diamondsCollected = 0;
-const DIAMONDS_TO_WIN = 6;
+const DIAMONDS_TO_WIN = 4;
 let gameBoard = [];
 const winScreen = document.createElement('div');
 const diamondCounter = document.createElement('div');
@@ -93,8 +93,8 @@ function setupWinScreen() {
     winScreen.innerHTML = `
         <div class="win-content">
             <h2>🎉 You Win! 🎉</h2>
-            <p>You collected all 6 diamonds!</p>
-            <div class="diamond-celebration">${'💎'.repeat(6)}</div>
+            <p>You collected all 4 diamonds!</p>
+            <div class="diamond-celebration">${'💎'.repeat(4)}</div>
             <button id="play-again-btn" class="win-btn">Play Again</button>
             <button id="next-level-btn" class="win-btn">Next Level</button>
         </div>
@@ -154,7 +154,7 @@ function showWinScreen() {
     setTimeout(() => winScreen.classList.add('visible'), 10);
     
     // Reward coins for winning
-    userData.coins += 100;
+    userData.coins += 20;
     localStorage.setItem('userCoins', userData.coins);
     
     // Animate celebration diamonds
@@ -163,7 +163,7 @@ function showWinScreen() {
         setTimeout(() => {
             diamond.style.opacity = '1';
             diamond.style.transform = 'translateY(0)';
-        }, i * 100);
+        }, i * 20);
     });
     
     // Setup button handlers
@@ -184,7 +184,7 @@ function resetDiamondGame() {
     // Create new game board with random diamonds
     gameBoard = Array(25).fill().map((_, i) => ({
         index: i,
-        hasDiamond: Math.random() < 0.24, // ~6 diamonds on average
+        hasDiamond: Math.random() < 0.24, // ~4 diamonds on average
         revealed: false
     }));
     
