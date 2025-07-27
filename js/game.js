@@ -15,7 +15,7 @@ const nextBtn = document.getElementById('next-btn');
 // Game State
 let gameState = {
     level: parseInt(localStorage.getItem('userLevel')) || 1,
-    coins: parseInt(localStorage.getItem('userCoins')) || 100,
+    coins: parseInt(localStorage.getItem('userCoins')) || 50,
     board: [],
     revealed: 0,
     diamondsFound: 0,
@@ -180,13 +180,13 @@ skipAdBtn.addEventListener('click', async () => {
 });
 
 skipCoinBtn.addEventListener('click', () => {
-    if (gameState.coins >= 50) {
-        gameState.coins -= 50;
+    if (gameState.coins >= 30) {
+        gameState.coins -= 30;
         gameState.level++;
         updateCoins();
         initGame();
     } else {
-        tg.showAlert('You need 50 coins to skip!');
+        tg.showAlert('You need 30 coins to skip!');
     }
 });
 
