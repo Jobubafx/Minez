@@ -9,7 +9,127 @@
   <link rel="stylesheet" href="css/style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
-<body>
+<body><!-- Add this right before the closing </body> tag -->
+<script>
+// Initialize game when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Game state
+    let diamondsCollected = 0;
+    const DIAMONDS_TO_WIN = 6;
+    const totalCells = 25;
+    let gameBoard = [];
+    
+    // DOM elements
+    const diamondCounter = document.getElementById('diamond-counter');
+    const winScreen = document.getElementById('win-screen');
+    const gameBoardElement = document.getElementById('game-board');
+    
+    // Initialize game board
+    function initializeGame() {
+        // Clear previous board
+        gameBoardElement.innerHTML = '';
+        diamondsCollected = 0;
+        updateDiamondCounter();
+        
+        // Create cells with diamonds
+        const diamondPositions = getRandomDiamondPositions();
+        for (let i = 0; i < totalCells; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.dataset.index = i;
+            cell.dataset.hasDiamond = diamondPositions.includes(i);
+            cell.addEventListener('click', handleCellClick);
+            gameBoardElement.appendChild(cell);
+        }
+    }
+    
+    // Get random positions for diamonds
+    function getRandomDiamondPositions() {
+        const positions = [];
+        while (positions.length < DIAMONDS_TO_WIN) {
+            const randomPos = Math.floor(Math.random() * totalCells);
+            if (!positions.includes(randomPos)) {
+                positions.push(randomPos);
+            }
+        }
+        return positions;
+    }
+    
+    // Handle cell clicks
+    function handleCellClick(event) {
+        const cell = event.target;
+        const hasDiamond = cell.dataset.hasDiamond === 'true';
+        const alreadyRevealed = cell.classList.contains('revealed');
+        
+        if (hasDiamond && !alreadyRevealed) {
+            // Found a diamond!
+            cell.classList.add('revealed', 'diamond-found');
+            diamondsCollected++;
+            updateDiamondCounter();
+            
+            // Show diamond emoji after animation
+            setTimeout(() => {
+                cell.innerHTML = '💎';
+                cell.classList.add('pulse');
+                
+                // Check win condition
+                if (diamondsCollected >= DIAMONDS_TO_WIN) {
+                    setTimeout(showWinScreen, 800);
+                }
+            }, 200);
+        }
+    }
+    
+    // Update diamond counter display
+    function updateDiamondCounter() {
+        const counterText = diamondCounter.querySelector('.diamond-count');
+        counterText.textContent = `${diamondsCollected}/${DIAMONDS_TO_WIN}`;
+        diamondCounter.classList.add('counter-pop');
+        setTimeout(() => diamondCounter.classList.remove('counter-pop'), 300);
+    }
+    
+    // Show win screen
+    function showWinScreen() {
+        winScreen.style.display = 'flex';
+        setTimeout(() => winScreen.classList.add('visible'), 10);
+        
+        // Animate celebration diamonds
+        const diamonds = winScreen.querySelectorAll('.diamond-celebration span');
+        diamonds.forEach((diamond, i) => {
+            setTimeout(() => {
+                diamond.style.opacity = '1';
+                diamond.style.transform = 'translateY(0)';
+            }, i * 100);
+        });
+    }
+    
+    // Win screen buttons
+    document.getElementById('play-again-btn').addEventListener('click', function() {
+        winScreen.classList.remove('visible');
+        setTimeout(() => {
+            winScreen.style.display = 'none';
+            initializeGame();
+        }, 300);
+    });
+    
+    document.getElementById('next-level-btn').addEventListener('click', function() {
+        // Add level progression logic here
+        winScreen.classList.remove('visible');
+        setTimeout(() => {
+            winScreen.style.display = 'none';
+            initializeGame();
+        }, 300);
+    });
+    
+    // Back button
+    document.getElementById('back-btn').addEventListener('click', function() {
+        window.location.href = 'index.html';
+    });
+    
+    // Initialize the game
+    initializeGame();
+});
+</script>
     <div class="game-container">
         <!-- Updated Game Header with Diamond Counter -->
         <header class="game-header">
