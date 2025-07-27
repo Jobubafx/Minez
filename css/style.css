@@ -10,6 +10,7 @@ body {
     background-color: #f5f5f5;
     color: #333;
     min-height: 100vh;
+    position: relative;
 }
 
 /* CONTAINERS */
@@ -20,14 +21,17 @@ body {
     max-width: 100%;
     margin: 0 auto;
     padding: 0 15px;
+    position: relative;
 }
 
 /* HEADER STYLES */
-header {
+.app-header {
     display: flex;
     justify-content: space-between;
     padding: 15px 0;
     align-items: center;
+    position: relative;
+    z-index: 10;
 }
 
 .menu-btn, .bonus-btn {
@@ -38,6 +42,19 @@ header {
     font-weight: bold;
     cursor: pointer;
     padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.menu-btn:hover, .bonus-btn:hover {
+    background-color: rgba(74, 118, 168, 0.1);
+}
+
+.menu-icon, .bonus-icon {
+    font-size: 1.2em;
 }
 
 /* HOMEPAGE STYLES */
@@ -49,17 +66,25 @@ header {
     flex: 1;
     gap: 30px;
     text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.game-logo {
+    margin-bottom: 20px;
 }
 
 .game-title {
     font-size: 2.5rem;
     color: #4a76a8;
     margin-bottom: 10px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
 }
 
 .username-display {
     font-size: 1rem;
     color: #666;
+    margin-top: 10px;
 }
 
 .start-btn {
@@ -72,14 +97,114 @@ header {
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .start-btn:hover {
     transform: scale(1.05);
+    background-color: #45a049;
 }
 
-/* GAME PAGE STYLES */
+.btn-icon {
+    font-size: 1.3em;
+}
+
+/* LOADING OVERLAY */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #4a76a8;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* AD CONTAINER */
+.ad-container {
+    width: 100%;
+    min-height: 50px;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* DROPDOWN MENU */
+.dropdown-menu {
+    position: absolute;
+    top: 60px;
+    left: 15px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+    min-width: 180px;
+}
+
+.dropdown-menu.visible {
+    display: flex;
+}
+
+.dropdown-btn {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    text-align: left;
+    cursor: pointer;
+    color: #333;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.2s;
+}
+
+.dropdown-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown-icon {
+    font-size: 1.1em;
+}
+
+/* GAME PAGE STYLES (existing styles remain unchanged) */
 .game-header {
     text-align: center;
     padding: 15px 0;
@@ -159,70 +284,53 @@ header {
 #restart-btn { background-color: #FF9500; }
 #next-btn { background-color: #4CAF50; grid-column: span 2; }
 
-/* DROPDOWN MENU */
-.dropdown-menu {
-    position: absolute;
-    top: 50px;
-    left: 15px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 10px;
-    display: none;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 100;
-    min-width: 150px;
-}
-
-.dropdown-menu.visible {
-    display: flex;
-}
-
-.dropdown-btn {
-    background: none;
-    border: none;
-    padding: 8px 12px;
-    text-align: left;
-    cursor: pointer;
-    color: #333;
-    border-radius: 4px;
-}
-
-.dropdown-btn:hover {
-    background-color: #f0f0f0;
-}
-
-/* RESPONSIVE */
-@media (max-width: 400px) {
-    .game-board {
-        max-width: 300px;
-    }
-    
-    .control-btn {
-        font-size: 11px;
-    }
-}
-
-/* ===== RESPONSIVE FIXES ===== */
+/* RESPONSIVE ADJUSTMENTS */
 @media (max-width: 500px) {
     .game-board {
         max-width: 280px;
         gap: 5px;
     }
-    
+
     .control-btn {
         font-size: 10px;
         padding: 8px 2px;
-        min-width: calc(33% - 4px);
     }
-    
+
     .game-title {
         font-size: 2rem;
     }
-    
+
     .cell {
         font-size: 18px;
+    }
+
+    .dropdown-menu {
+        min-width: 160px;
+    }
+
+    .ad-container {
+        min-height: 40px;
+    }
+}
+
+@media (max-width: 400px) {
+    .game-board {
+        max-width: 260px;
+    }
+
+    .menu-btn, .bonus-btn {
+        padding: 6px 8px;
+        font-size: 14px;
+    }
+
+    .start-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+
+    .dropdown-menu {
+        min-width: 140px;
+        top: 55px;
     }
 }
 
@@ -230,8 +338,21 @@ header {
     .game-board {
         max-width: 240px;
     }
-    
+
     .control-btn {
         font-size: 9px;
+    }
+
+    .game-title {
+        font-size: 1.8rem;
+    }
+
+    .menu-btn, .bonus-btn {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .menu-text, .bonus-text {
+        font-size: 10px;
     }
 }
