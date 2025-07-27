@@ -9,13 +9,14 @@
   <link rel="stylesheet" href="css/style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
-<body><!-- Add this right before the closing </body> tag -->
+<body>
+<!-- Add this right before the closing </body> tag -->
 <script>
 // Initialize game when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Game state
     let diamondsCollected = 0;
-    const DIAMONDS_TO_WIN = 6;
+    const DIAMONDS_TO_WIN = 4;
     const totalCells = 25;
     let gameBoard = [];
     
