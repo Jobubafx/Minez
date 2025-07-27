@@ -1,46 +1,25 @@
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-// Initialize User Data
-let userData = {
-    username: tg.initDataUnsafe?.user?.username || 'Player',
-    coins: localStorage.getItem('userCoins') ? parseInt(localStorage.getItem('userCoins')) : 100,
-    level: localStorage.getItem('userLevel') ? parseInt(localStorage.getItem('userLevel')) : 1,
-    soundEnabled: localStorage.getItem('soundEnabled') !== 'false',
-    musicEnabled: localStorage.getItem('musicEnabled') !== 'false',
-    theme: localStorage.getItem('theme') || 'light'
-};
+// Initialize elements
+const menuBtn = document.getElementById('menu-btn');
+const dropdownMenu = document.getElementById('dropdown-menu');
 
-// Apply saved theme
-document.body.classList.toggle('dark', userData.theme === 'dark');
+// Toggle dropdown menu
+menuBtn.addEventListener('click', () => {
+    dropdownMenu.classList.toggle('visible');
+});
 
-// Display username
-document.getElementById('username-display').textContent = `Welcome, ${userData.username}!`;
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    if (!menuBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove('visible');
+    }
+});
 
-// Event Listeners
+// Navigation
 document.getElementById('start-btn').addEventListener('click', () => {
     window.location.href = 'game.html';
-});
-
-document.getElementById('menu-btn').addEventListener('click', () => {
-    document.getElementById('dropdown-menu').classList.toggle('hidden');
-});
-
-document.getElementById('bonus-btn').addEventListener('click', async () => {
-    const lastBonusDate = localStorage.getItem('lastBonusDate');
-    const today = new Date().toDateString();
-    
-    if (lastBonusDate !== today) {
-        const adCompleted = await showInterstitialAd();
-        if (adCompleted) {
-            userData.coins += 100;
-            localStorage.setItem('userCoins', userData.coins);
-            localStorage.setItem('lastBonusDate', today);
-            tg.showAlert('Daily bonus of 100 coins claimed!');
-        }
-    } else {
-        tg.showAlert('You already claimed your bonus today!');
-    }
 });
 
 document.getElementById('shop-btn').addEventListener('click', () => {
@@ -51,9 +30,7 @@ document.getElementById('settings-btn').addEventListener('click', () => {
     window.location.href = 'settings.html';
 });
 
-function showInterstitialAd() {
-    return new Promise((resolve) => {
-        window.adCompleteCallback = () => resolve(true);
-        window.adErrorCallback = () => resolve(false);
-    });
-}
+// Daily Bonus
+document.getElementById('bonus-btn').addEventListener('click', () => {
+    alert('Daily bonus claimed!');
+});
