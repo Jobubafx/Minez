@@ -12,7 +12,7 @@ const restartBtn = document.getElementById('restart-btn');
 
 // Game State
 let gameState = {
-    level: localStorage.getItem('userLevel') ? parseInt(localStorage.getItem('userLevel')) : 1,
+    level: localStorage.getItem('userLevel') ? parseInt(localStorage.getItem('userLevel')) : 10,
     coins: localStorage.getItem('userCoins') ? parseInt(localStorage.getItem('userCoins')) : 0,
     board: [],
     revealed: 0,
@@ -229,8 +229,8 @@ skipAdBtn.addEventListener('click', () => {
 });
 
 skipCoinBtn.addEventListener('click', () => {
-    if (gameState.coins >= 50) {
-        gameState.coins -= 50;
+    if (gameState.coins >= 20) {
+        gameState.coins -= 20;
         updateCoins();
         gameState.level++;
         localStorage.setItem('userLevel', gameState.level);
