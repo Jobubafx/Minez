@@ -1,54 +1,66 @@
-// Replace the entire game.js with this updated version
+// Initialize Telegram WebApp
 const tg = window.Telegram.WebApp;
-tg.expand();
+
+// DOM Elements
+const gameBoard = document.getElementById('game-board');
+const levelDisplay = document.getElementById('level-display');
+const coinBalance = document.getElementById('coin-balance');
+const backBtn = document.getElementById('back-btn');
+const skipAdBtn = document.getElementById('skip-ad-btn');
+const skipCoinBtn = document.getElementById('skip-coin-btn');
+const restartBtn = document.getElementById('restart-btn');
 
 // Game State
 let gameState = {
-    level: parseInt(localStorage.getItem('userLevel')) || 1,
-    coins: parseInt(localStorage.getItem('userCoins')) || 100,
+    level: localStorage.getItem('userLevel') ? parseInt(localStorage.getItem('userLevel')) : 1,
+    coins: localStorage.getItem('userCoins') ? parseInt(localStorage.getItem('userCoins')) : 0,
     board: [],
     revealed: 0,
     diamondsFound: 0,
     bombs: 0,
     diamonds: 0,
-    gameOver: false
+    gameOver: false,
+    adCounter: 0,
+    lastAdTime: 0
 };
 
 // Initialize Game
 function initGame() {
-    // Determine bombs/diamonds based on level pattern
-    const pattern = gameState.level % 3;
-    switch(pattern) {
-        case 1: // First pattern
-            gameState.bombs = 6;
-            gameState.diamonds = 19;
-            break;
-        case 2: // Second pattern
-            gameState.bombs = 7;
-            gameState.diamonds = 18;
-            break;
-        case 0: // Third pattern
-            gameState.bombs = 8;
-            gameState.diamonds = 17;
-            break;
-    }
-
     // Update display
-    document.getElementById('level-display').textContent = `Level: ${gameState.level}`;
-    document.getElementById('coin-balance').textContent = `Coins: ${gameState.coins}`;
-    document.getElementById('next-btn').disabled = true;
-
+    levelDisplay.textContent = `Level: ${gameState.level}`;
+    coinBalance.textContent = `Coins: ${gameState.coins}`;
+    
+    // Determine bombs and diamonds based on level
+    if ((gameState.level >= 1 && gameState.level <= 25) || 
+        (gameState.level >= 51 && gameState.level <= 75) ||
+        (gameState.level >= 101 && gameState.level <= 125) ||
+        (gameState.level >= 151 && gameState.level <= 200) ||
+        (gameState.level >= 226 && gameState.level <= 250) ||
+        (gameState.level >= 301 && gameState.level <= 325) ||
+        (gameState.level >= 351 && gameState.level <= 400) ||
+        (gameState.level >= 426 && gameState.level <= 450)) {
+        gameState.bombs = 5;
+        gameState.diamonds = 20;
+    } else {
+        gameState.bombs = 8;
+        gameState.diamonds = 17;
+    }
+    
+    // Generate board
     generateBoard();
+    
+    // Start timer
+    startTimer();
 }
 
+// Generate Game Board
 function generateBoard() {
-    const gameBoard = document.getElementById('game-board');
     gameBoard.innerHTML = '';
     gameState.board = [];
     gameState.revealed = 0;
     gameState.diamondsFound = 0;
     gameState.gameOver = false;
-
+    
     // Create empty board
     for (let i = 0; i < 25; i++) {
         gameState.board.push({
@@ -57,7 +69,7 @@ function generateBoard() {
             revealed: false
         });
     }
-
+    
     // Place bombs
     let bombsPlaced = 0;
     while (bombsPlaced < gameState.bombs) {
@@ -67,50 +79,201 @@ function generateBoard() {
             bombsPlaced++;
         }
     }
-
+    
     // Place diamonds
     let diamondsPlaced = 0;
     while (diamondsPlaced < gameState.diamonds) {
-        const randomIndex = Math.floor(Math.random() * 25);
+        const randomIndex = Math.floor(Math.floor(Math.random() * 25));
         if (!gameState.board[randomIndex].isBomb && !gameState.board[randomIndex].isDiamond) {
             gameState.board[randomIndex].isDiamond = true;
             diamondsPlaced++;
         }
     }
-
+    
     // Create cells
     gameState.board.forEach((cell, index) => {
         const cellElement = document.createElement('div');
         cellElement.className = 'cell';
         cellElement.dataset.index = index;
+        
         cellElement.addEventListener('click', () => handleCellClick(index));
+        
         gameBoard.appendChild(cellElement);
     });
 }
 
-// ... [Keep all other existing functions like handleCellClick, gameOver, etc.]
+// Handle Cell Click
+function handleCellClick(index) {
+    if (gameState.gameOver || gameState.board[index].revealed) return;
+    
+    const cell = gameState.board[index];
+    cell.revealed = true;
+    gameState.revealed++;
+    
+    const cellElement = document.querySelector(`.cell[data-index="${index}"]`);
+    
+    if (cell.isBomb) {
+        // Game over
+        cellElement.classList.add('bomb');
+        cellElement.textContent = '💣';
+        gameOver(false);
+    } else if (cell.isDiamond) {
+        // Found diamond
+        cellElement.classList.add('diamond');
+        cellElement.textContent = '💎';
+        gameState.diamondsFound++;
+        
+        // Play sound
+        playSound('diamond');
+        
+        // Check win condition
+        const requiredDiamonds = gameState.bombs === 5 ? 6 : 5;
+        if (gameState.diamondsFound >= requiredDiamonds) {
+            gameOver(true);
+        }
+    } else {
+        // Empty cell
+        cellElement.classList.add('revealed');
+        cellElement.textContent = '';
+    }
+}
 
-// Fixing button event listeners:
-document.getElementById('skip-coin-btn').addEventListener('click', function() {
+// Game Over
+function gameOver(isWin) {
+    gameState.gameOver = true;
+    
+    if (isWin) {
+        // Play win sound
+        playSound('win');
+        
+        // Award coins
+        const coinsWon = Math.floor(gameState.level * 1.5);
+        gameState.coins += coinsWon;
+        updateCoins();
+        
+        // Show win message
+        tg.showAlert(`Level Complete! You won ${coinsWon} coins!`);
+        
+        // Increase level
+        gameState.level++;
+        localStorage.setItem('userLevel', gameState.level);
+        levelDisplay.textContent = `Level: ${gameState.level}`;
+        
+        // Show ad every 3 levels
+        if (gameState.level % 3 === 0) {
+            showInterstitialAd();
+        }
+    } else {
+        // Play lose sound
+        playSound('lose');
+        
+        // Show lose message
+        tg.showAlert('Game Over! You hit a bomb!');
+    }
+    
+    // Reveal all cells
+    gameState.board.forEach((cell, index) => {
+        const cellElement = document.querySelector(`.cell[data-index="${index}"]`);
+        if (cell.isBomb) {
+            cellElement.classList.add('bomb');
+            cellElement.textContent = '💣';
+        } else if (cell.isDiamond) {
+            cellElement.classList.add('diamond');
+            cellElement.textContent = '💎';
+        }
+    });
+}
+
+// Update Coins Display
+function updateCoins() {
+    coinBalance.textContent = `Coins: ${gameState.coins}`;
+    localStorage.setItem('userCoins', gameState.coins);
+}
+
+// Play Sound
+function playSound(type) {
+    if (localStorage.getItem('soundEnabled') === 'false') return;
+    
+    const sound = new Audio();
+    sound.src = `assets/sounds/${type}.mp3`;
+    sound.play().catch(e => console.log('Sound play failed:', e));
+}
+
+// Start Timer
+function startTimer() {
+    // Timer implementation would go here
+}
+
+// Show Interstitial Ad
+function showInterstitialAd() {
+    // This would be replaced with actual ad implementation
+    console.log('Showing interstitial ad');
+    // Example with Monetag:
+    const adScript = document.createElement('script');
+    adScript.src = 'https://example.com/monetag-interstitial.js';
+    document.body.appendChild(adScript);
+}
+
+// Event Listeners
+backBtn.addEventListener('click', () => {
+    window.location.href = 'index.html';
+});
+
+skipAdBtn.addEventListener('click', () => {
+    showInterstitialAd();
+    setTimeout(() => {
+        gameState.level++;
+        localStorage.setItem('userLevel', gameState.level);
+        initGame();
+    }, 1000);
+});
+
+skipCoinBtn.addEventListener('click', () => {
     if (gameState.coins >= 50) {
         gameState.coins -= 50;
+        updateCoins();
         gameState.level++;
-        updateCoins();
+        localStorage.setItem('userLevel', gameState.level);
         initGame();
     } else {
-        tg.showAlert('You need 50 coins to skip!');
+        tg.showAlert('Not enough coins!');
     }
 });
 
-document.getElementById('restart-btn').addEventListener('click', function() {
-    if (gameState.coins >= 5) {
-        gameState.coins -= 5;
-        updateCoins();
-        initGame();
-    } else {
-        tg.showAlert('You need 5 coins to restart!');
+restartBtn.addEventListener('click', () => {
+    gameState.adCounter++;
+    if (gameState.adCounter % 3 === 0) {
+        showInterstitialAd();
     }
+    initGame();
 });
 
-// Initialize game
-document.addEventListener('DOMContentLoaded', initGame);
+// Initialize ads
+function initAds() {
+    // Top ad
+    const topAdScript = document.createElement('script');
+    topAdScript.src = 'https://example.com/monetag.js';
+    topAdScript.setAttribute('data-ad-unit', 'TOP_BANNER');
+    document.getElementById('ad-top').appendChild(topAdScript);
+    
+    // Bottom ad
+    const bottomAdScript = document.createElement('script');
+    bottomAdScript.src = 'https://example.com/monetag.js';
+    bottomAdScript.setAttribute('data-ad-unit', 'BOTTOM_BANNER');
+    document.getElementById('ad-bottom').appendChild(bottomAdScript);
+    
+    // Periodic ads
+    setInterval(() => {
+        const now = Date.now();
+        if (now - gameState.lastAdTime > 600000) { // 10 minutes
+            showInterstitialAd();
+            gameState.lastAdTime = now;
+        }
+    }, 60000); // Check every minute
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    initGame();
+    initAds();
+});
