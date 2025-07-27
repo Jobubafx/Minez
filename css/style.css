@@ -9,31 +9,41 @@
 body {
     background-color: #f5f5f5;
     color: #333;
-    height: 100vh;
+    min-height: 100vh;
     overflow-x: hidden;
 }
 
+/* ===== CONTAINERS ===== */
 .container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
     max-width: 100%;
     margin: 0 auto;
-    position: relative;
+    padding: 0 10px;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 10px;
 }
 
 /* ===== HEADER STYLES ===== */
 header {
     display: flex;
     justify-content: space-between;
-    padding: 15px;
+    padding: 12px 15px;
     background-color: #4a76a8;
     color: white;
     position: relative;
     z-index: 10;
 }
 
-.game-header, .shop-header, .settings-header {
+.game-header {
     flex-direction: column;
     align-items: center;
     gap: 10px;
@@ -82,26 +92,24 @@ header {
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.start-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-}
-
-.start-btn:active {
-    transform: translateY(0);
-}
-
 /* ===== GAME BOARD STYLES ===== */
+.board-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    min-height: 0; /* Critical for Firefox */
+}
+
 .game-board {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
-    gap: 6px;
-    padding: 15px;
-    flex: 1;
+    gap: 8px;
     width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
+    max-width: 350px;
+    aspect-ratio: 1/1;
 }
 
 .cell {
@@ -111,7 +119,7 @@ header {
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s;
     user-select: none;
@@ -119,12 +127,10 @@ header {
 
 .cell:hover {
     background-color: #d0d0d0;
-    transform: scale(0.98);
 }
 
 .cell.revealed {
     background-color: #f0f0f0;
-    transform: scale(0.95);
 }
 
 .cell.bomb {
@@ -141,50 +147,30 @@ header {
 .game-controls {
     display: flex;
     justify-content: space-between;
-    padding: 12px;
+    padding: 12px 0;
     background-color: #4a76a8;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: 6px;
 }
 
 .control-btn {
-    background-color: #4a76a8;
-    color: white;
     flex: 1;
-    min-width: 18%;
-    font-size: 12px;
+    min-width: calc(20% - 5px);
     padding: 10px 5px;
-    border: none;
+    font-size: 12px;
     border-radius: 6px;
+    border: none;
     cursor: pointer;
-    transition: all 0.2s;
     font-weight: 600;
+    color: white;
+    transition: all 0.2s;
 }
 
-.control-btn:hover {
-    opacity: 0.9;
-}
-
-.control-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-#next-btn {
-    background-color: #4CAF50;
-}
-
-#restart-btn {
-    background-color: #FF9500;
-}
-
-#skip-coin-btn {
-    background-color: #9c27b0;
-}
-
-#skip-ad-btn {
-    background-color: #ff9800;
-}
+#back-btn { background-color: #3a5f8a; }
+#skip-ad-btn { background-color: #ff9800; }
+#skip-coin-btn { background-color: #9c27b0; }
+#restart-btn { background-color: #FF9500; }
+#next-btn { background-color: #4CAF50; }
 
 /* ===== SHOP STYLES ===== */
 .coin-packages {
@@ -201,23 +187,6 @@ header {
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-    transition: transform 0.3s;
-}
-
-.coin-package:hover {
-    transform: translateY(-3px);
-}
-
-.coin-package h3 {
-    color: #4a76a8;
-    margin-bottom: 5px;
-    font-size: 1.2rem;
-}
-
-.coin-package p {
-    color: #666;
-    font-size: 1.1rem;
-    margin-bottom: 15px;
 }
 
 .buy-btn {
@@ -229,11 +198,6 @@ header {
     width: 100%;
     cursor: pointer;
     font-weight: 600;
-    transition: all 0.2s;
-}
-
-.buy-btn:hover {
-    background-color: #3e8e41;
 }
 
 /* ===== SETTINGS STYLES ===== */
@@ -256,12 +220,6 @@ header {
     display: inline-block;
     width: 60px;
     height: 34px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
 }
 
 .slider {
@@ -305,25 +263,24 @@ input:checked + .slider:before {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     z-index: 100;
-    display: flex;
+    display: none;
     flex-direction: column;
-    padding: 10px;
+    padding: 8px 0;
     min-width: 150px;
 }
 
-.dropdown-menu.hidden {
-    display: none;
+.dropdown-menu.visible {
+    display: flex;
 }
 
-.dropdown-menu button {
-    margin: 5px 0;
-    background-color: #4a76a8;
-    color: white;
+.dropdown-btn {
+    background: none;
     border: none;
-    padding: 10px;
-    border-radius: 6px;
-    cursor: pointer;
+    padding: 10px 16px;
     text-align: left;
+    cursor: pointer;
+    color: #333;
+    font-size: 14px;
 }
 
 /* ===== DARK THEME ===== */
@@ -336,13 +293,8 @@ body.dark .game-title {
     color: #4CAF50;
 }
 
-body.dark .username-display {
-    color: #aaa;
-}
-
 body.dark .cell {
     background-color: #333;
-    color: #f0f0f0;
 }
 
 body.dark .cell:hover {
@@ -351,62 +303,30 @@ body.dark .cell:hover {
 
 body.dark .coin-package {
     background-color: #2d2d2d;
-    color: #f0f0f0;
-}
-
-body.dark .coin-package h3 {
-    color: #4CAF50;
-}
-
-body.dark .coin-package p {
-    color: #aaa;
-}
-
-body.dark .setting {
-    border-bottom-color: #444;
 }
 
 body.dark .dropdown-menu {
     background-color: #2d2d2d;
 }
 
+body.dark .dropdown-btn {
+    color: #f0f0f0;
+}
+
 /* ===== RESPONSIVE ADJUSTMENTS ===== */
 @media (max-width: 400px) {
+    .game-board {
+        max-width: 300px;
+        gap: 6px;
+    }
+    
     .control-btn {
         font-size: 11px;
         padding: 8px 3px;
+        min-width: calc(33% - 4px);
     }
     
     .game-title {
         font-size: 2.5rem;
     }
-    
-    .cell {
-        font-size: 20px;
-    }
-}
-
-/* ===== MONETAG AD CONTAINERS ===== */
-.monetag-ad-container {
-    margin: 0 auto;
-    text-align: center;
-    width: 100%;
-    overflow: hidden;
-}
-
-/* Interstitial ad overlay */
-body.monetag-interstitial-active {
-    overflow: hidden;
-    height: 100vh;
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-.pulse {
-    animation: pulse 1.5s infinite;
 }
