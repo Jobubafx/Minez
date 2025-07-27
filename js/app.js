@@ -1,20 +1,19 @@
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-// Initialize elements
-const menuBtn = document.getElementById('menu-btn');
-const dropdownMenu = document.getElementById('dropdown-menu');
+// Initialize user data
+const userData = {
+    username: tg.initDataUnsafe?.user?.username || 'Player',
+    coins: localStorage.getItem('userCoins') || 50,
+    level: localStorage.getItem('userLevel') || 1
+};
 
-// Toggle dropdown menu
-menuBtn.addEventListener('click', () => {
-    dropdownMenu.classList.toggle('visible');
-});
+// Display username
+document.getElementById('username-display').textContent = `Welcome, ${userData.username}!`;
 
-// Close dropdown when clicking outside
-document.addEventListener('click', (e) => {
-    if (!menuBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        dropdownMenu.classList.remove('visible');
-    }
+// Menu toggle
+document.getElementById('menu-btn').addEventListener('click', () => {
+    document.getElementById('dropdown-menu').classList.toggle('visible');
 });
 
 // Navigation
@@ -32,5 +31,23 @@ document.getElementById('settings-btn').addEventListener('click', () => {
 
 // Daily Bonus
 document.getElementById('bonus-btn').addEventListener('click', () => {
-    alert('Daily bonus claimed!');
+    const lastClaimed = localStorage.getItem('lastBonusClaim');
+    const today = new Date().toDateString();
+    
+    if (lastClaimed !== today) {
+        userData.coins += 50;
+        localStorage.setItem('userCoins', userData.coins);
+        localStorage.setItem('lastBonusClaim', today);
+        alert('Daily bonus claimed! +50 coins');
+    } else {
+        alert('Bonus already claimed today!');
+    }
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('dropdown-menu');
+    if (!e.target.closest('#menu-btn') && !e.target.closest('.dropdown-menu')) {
+        dropdown.classList.remove('visible');
+    }
 });
